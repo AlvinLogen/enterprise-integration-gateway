@@ -1,0 +1,105 @@
+openapi: 3.1.0
+info:
+  title: Enterprise Integration Gateway - Asset API
+  version: 1.0.0
+  description: Contract-first asset/patient-lite interface for Integration Sprint I1
+servers:
+  - url: http://localhost:8080/v1
+    description: Via KrakenD Gateway
+paths:
+  /assets:
+    get:
+      summary: List assets
+      operationId: listAssets
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default:20 }
+      responses:
+        "200":
+          description: A page of Assets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Asset" }
+                  meta:
+                    $ref: "#/components/schemas/Meta"
+    post:
+      summary: Create an asset
+      operationId: createAsset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AssetInput" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/Asset" }
+        "400":
+          $ref: "#/components/responses/Problem"
+  /assets/{id}:
+    get:
+      summary: Get an asset by id
+      operationId: getAsset
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: The asset
+          content:
+            application/json:
+            schema:
+              type: object
+              properties:
+                data: { $ref: "#/components/schemas/Asset" }
+        "404":
+          $ref: "#/components/responses/Problem"
+components:
+  schemas:
+    Asset:
+      type: object
+      required: [id, name, kind, createdAt, updatedAt]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, minLength: 1, maxLength: 120 }
+        kind: { type: string, enum: [device, record, location] }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    AssetInput:
+      type: object
+      required: [name, kind]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        kind: { type: string, enum: [device, record, location] }
+    Meta:
+      type: object
+      properties:
+        count: { type: integer }
+    Problem:
+      type: object
+      description: RFC 7807 Problem Details
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: string }
+        detail: { type: string }
+        instance: { type: string }
+  responses:
+    Problem:
+      description: RFC 7807 error
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/responses/Problem" }

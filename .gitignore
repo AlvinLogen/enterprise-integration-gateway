@@ -1,0 +1,18 @@
+# dependancies
+node_modules/
+
+# secrets & local env
+.env
+*.local
+
+# logs & build noise
+*.log
+dist/
+coverage/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# other
+project/
