@@ -1,0 +1,79 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.7/krakend.json",
+  "version": 3,
+  "name": "eig-gateway",
+  "timeout": "3000ms",
+  "port": 8080,
+  "extra_config": {
+    "security/cors": {
+      "allow_origins": ["http://localhost:5500"],
+      "allow_methods": ["GET", "POST"],
+      "allow_headers": ["Authorization", "Content-Type", "X-Correlation-Id"],
+      "expose_headers": ["X-Correlation-Id"],
+      "max_age": "12h"
+    },
+    "router": { "return_error_msg": false }
+  },
+  "endpoints": [
+    {
+      "endpoint": "/v1/assets",
+      "method": "GET",
+      "input_query_strings": ["limit"],
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "max_rate": 5,
+          "capacity": 5,
+          "client_max_rate": 2,
+          "client_capacity": 2,
+          "strategy": "header",
+          "key": "X-Correlation-Id"
+        },
+        "auth/validator": {
+          "alg": "HS256",
+          "jwk_local_path": "/etc/krakend/jwk.json",
+          "disable_jwk_security": true,
+          "roles_key": "scope",
+          "roles": ["assets:read"]
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/v1/assets",
+          "host": ["http://host.docker.internal:3000"],
+          "timeout": "2000ms"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/assets",
+      "method": "POST",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "jwk_local_path": "/etc/krakend/jwk.json",
+          "disable_jwk_security": true,
+          "roles_key": "scope",
+          "roles": ["assets:write"]
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/v1/assets",
+          "host": ["http://host.docker.internal:3000"],
+          "timeout": "2000ms"
+        }
+      ]
+    },
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/health",
+          "host": ["http://host.docker.internal:3000"],
+          "timeout": "1000ms"
+        }
+      ]
+    }
+  ]
+}
