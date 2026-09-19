@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+env:
+  MSSQL_SA_PASSWORD: "EigCi!${{ github.run_id }}Aa1"
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -13,12 +16,11 @@ jobs:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: "Y"
-          MSSQL_SA_PASSWORD: "_q98g%-U2A.{i|CNdt'[(<rz@l"
+          MSSQL_SA_PASSWORD: ${{ env.MSSQL_SA_PASSWORD }}
           MSSQL_PID: "Developer"
         ports: ["1433:1433"]
         options: >-
-          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P _q98g%-U2A.{i|CNdt'[(<rz@l"
-          --No -Q 'SELECT 1' || exit 1"
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"${{ env.MSSQL_SA_PASSWORD }}\" -No -Q \"SELECT 1\" || exit 1"
           --health-interval 10s --health-timeout 5s --health-retries 10
 
     env:
@@ -26,7 +28,7 @@ jobs:
       DB_PORT: "1433"
       DB_NAME: eig
       DB_USER: sa
-      DB_PASSWORD: "_q98g%-U2A.{i|CNdt'[(<rz@l"
+      DB_PASSWORD: ${{ env.MSSQL_SA_PASSWORD }}
       DB_ENCRYPT: "true"
       DB_TRUST_CERT: "true"
     steps:
@@ -35,7 +37,7 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependancy-path: services/api/package-lock.json
+          cache-dependency-path: services/api/package-lock.json
 
       - name: Install
         working-directory: services/api
@@ -47,9 +49,8 @@ jobs:
 
       - name: Apply migration
         run: |
-          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$DB_PASSWORD" - No \
+          /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$DB_PASSWORD" -No \
             -i services/api/src/db/migrations/001_init.sql
-        continue-on-error: true
 
       - name: Unit tests
         working-directory: services/api
