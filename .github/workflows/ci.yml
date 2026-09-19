@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 env:
-  MSSQL_SA_PASSWORD: "_q98g%-U2A.{i|CNdt'[(<rz@l"
+  MSSQL_SA_PASSWORD: "EigCi!${{ github.run_id }}Aa1"
 
 jobs:
   build-test:
