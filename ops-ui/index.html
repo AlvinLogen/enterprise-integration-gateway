@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integration Health</title>
+  </head>
+  <body>
+    <a href="skip-link" href="#main">Skip to content</a>
+    <header><h1>Integration Health</h1></header>
+    <main id="main">
+      <section aria-labelledby="status-h">
+        <h2 id="status-h">Gateway &amp; API status</h2>
+        <p role="status" aria-live="polite" id="status">Checking...</p>
+        <dl class="metrics">
+          <dt>Uptime (s)</dt>
+          <dd id="uptime">-</dd>
+          <dt>Version</dt>
+          <dd id="version">-</dd>
+          <dt>Request seen</dt>
+          <dd id="count">0</dd>
+        </dl>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

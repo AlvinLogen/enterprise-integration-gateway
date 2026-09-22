@@ -1,0 +1,21 @@
+@gateway = http://localhost:8080
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImRldiJ9.eyJzdWIiOiJkZXYiLCJzY29wZSI6WyJhc3NldHM6cmVhZCIsImFzc2V0czp3cml0ZSJdLCJleHAiOjE3ODk3NDE4OTN9.wNTtMQ4fltS72-aKtkUMeIJusoPK3thCB66pah5tOxY
+
+### Health (no authorisation)
+GET {{gateway}}/health
+
+### Create an asset (needs assets:write)
+POST {{gateway}}/v1/assets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+X-Correlation-Id: demo-001
+
+{ "name": "MRI Scanner 1", "kind": "device"}
+
+### List assets (needs assets:read)
+GET {{gateway}}/v1/assets?limit=10
+Authorization: Bearer {{token}}
+X-Correlation-id: demo-003
+
+### Rejected: no token -> 401 at the gateway
+GET  {{gateway}}/v1/assets

@@ -1,0 +1,10 @@
+{
+  "keys": [
+    {
+      "kty": "oct",
+      "kid": "dev",
+      "alg": "HS256",
+      "k": "c2VjcmV0LWtleS1mb3ItaTEtZGV2LW9ubHktMzJieXRlcw"
+    }
+  ]
+}

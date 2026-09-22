@@ -16,3 +16,4 @@ Thumbs.db
 
 # other
 project/
+*.mjs
