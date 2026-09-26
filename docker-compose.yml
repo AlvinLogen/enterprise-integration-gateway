@@ -23,3 +23,20 @@ services:
       - "8080:8080"
     depends_on:
       - sqlserver
+  api:
+    build: ./services/api
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DB_HOST: sqlserver
+      DB_PORT: "1433"
+      DB_NAME: eig
+      DB_USER: sa
+      DB_PASSWORD: "_q98g%-U2A.{i|CNdt'[(<rz@l"
+      DB_ENCRYPT: "true"
+      DB_TRUST_CERT: "true"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    ports:
+      - "3000:3000"

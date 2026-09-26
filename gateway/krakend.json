@@ -39,7 +39,7 @@
       "backend": [
         {
           "url_pattern": "/v1/assets",
-          "host": ["http://host.docker.internal:3000"],
+          "host": ["http://api:3000"],
           "timeout": "2000ms"
         }
       ]
